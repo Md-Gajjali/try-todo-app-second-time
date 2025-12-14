@@ -1,18 +1,20 @@
 import { useEffect, useState } from 'react'
 import './App.css'
-import { ToastContainer, toast, Bounce } from 'react-toastify';
-import { getDatabase, ref, set, push, onValue  } from "firebase/database";
+import { ToastContainer, toast,Bounce } from 'react-toastify';
+import { getDatabase, ref, set,push  ,onValue } from "firebase/database";
+
+
 
 
 
 function App() {
 
   const [task, setTask] = useState("")
-  const [todos,setTodos] = useState([])
+  const [todo,setTodo]=useState([])
 
-  const notify = () => {
 
-    task == "" ?
+    const notify = () =>{
+      task =="" ?
       toast.error('🦄 Wow so easy!', {
         position: "top-right",
         autoClose: 5000,
@@ -23,19 +25,22 @@ function App() {
         progress: undefined,
         theme: "light",
         transition: Bounce,
-      }) :
-      toast.success('🦄 Wow so easy!', {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
-  }
+        })
+        :
+        toast.success('🦄 Wow so easy!', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+          });
+
+    } 
+
 
 
   const handleTodo = (e) => {
@@ -45,34 +50,34 @@ function App() {
   const handleClick = (e) => {
     e.preventDefault()
 
-    if (task == "") {
+    if (task =="") {
       notify()
-    } else {
-      const db = getDatabase();
-      const NewRef = push(ref(db, 'Todo/'))
-      set(NewRef, {
-        TodoName: task
-      }).then(() => {
-        notify();
-        setTask("");
-      });
+    }else{
+       const db = getDatabase();
+       const NewRef = push(ref(db, 'Todo/' ))
+       set(NewRef, { TodoName: task}).then(
+        notify(),
+        setTask("")
+      )
     }
+   
   }
 
 
+    useEffect(()=>{
+      const db = getDatabase();
+      const starCountRef = ref(db, 'Todo/' );
 
-  useEffect(()=>{
-    const db = getDatabase();
-    const TodoRef = ref(db, 'Todo/')
-    onValue(TodoRef, (snapshot) => {
-      const Arry = []
-      snapshot.forEach((item)=>{
-        Arry.push(item.val())
-        setTodos(Arry)
-      })   
-    });
+      onValue(starCountRef, (snapshot) => {
+        const Arr = [];
+        // 
+        snapshot.forEach((item)=>{
+          Arr.push(item.val())
+          setTodo(Arr)
+        }) 
+      });
+    },[])
 
-  },[])
 
 
   return (
@@ -101,13 +106,14 @@ function App() {
         >Submit</button>
 
         <ul className='text-black text-3xl '>
-          {
-            todos.map((item)=>{
-              return(
-                <li>{item.TodoName}</li>
-              )
-            })
-          }
+        {
+          todo.map((item)=>{
+            return(
+                <li className="w-full px-4 text-start py-2 border-b border-default rounded-t-lg">{item.TodoName}</li>
+            )
+          })
+        }
+
         </ul>
       </form>
 

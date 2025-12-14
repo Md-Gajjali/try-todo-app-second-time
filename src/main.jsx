@@ -5,6 +5,7 @@ import App from './App.jsx'
 import { ToastContainer } from 'react-toastify'
 import firebaseConfig from './FrebaseConfig.jsx'
 
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ToastContainer />
